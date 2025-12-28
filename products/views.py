@@ -29,7 +29,7 @@ def product_list(request):
     # 1. 业务逻辑：从数据库获取所有产品数据（使用 ORM）
     all_products = Product.objects.all()
 
-    # 2. 准备上下文（Context）：将数据打包成字典，以便传递给模板
+    # 2.准备上下文（Context）：将数据打包成字典，以便传递给模板
     context = {
         'products': all_products,
         'page_title': '产品列表页'
@@ -128,12 +128,29 @@ def product_delete(request, pk):
     return render(request, 'products/product_confirm_delete.html', {'product': product})
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    # 添加权限：仅登录用户可写，匿名用户只能看 (GET)
+    # queryset = Product.objects.all()
+    # serializer_class = ProductSerializer
+    # # 添加权限：仅登录用户可写，匿名用户只能看 (GET)
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    queryset = Product.objects.all()
+    # 注意：我们移除了 'queryset = Product.objects.all()' 这一行，
+    # 因为我们将使用 get_queryset 方法动态地获取查询集。
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]  # 现在要求所有操作都必须登录
 
+    # 覆盖 get_queryset 方法以实现按用户过滤
+    def get_queryset(self):
+        """
+        这个视图应返回所有当前已认证用户有权访问的产品。
+        """
+        user = self.request.user
+        # 如果用户是匿名的（理论上 IsAuthenticated 权限会阻止，但安全起见），返回空查询集
+        if user.is_anonymous:
+            return Product.objects.none()
+
+        # 应用你原有的过滤逻辑：
+        return Product.objects.filter(category__allowed_users=user).distinct()
 
 
 

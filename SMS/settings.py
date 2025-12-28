@@ -57,6 +57,10 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), # 访问令牌生命周期
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # 刷新令牌生命周期
+    # === 添加以下两个设置来启用轮换 ===
+    'ROTATE_REFRESH_TOKENS': True, # 启用刷新令牌轮换
+    'BLACKLIST_AFTER_ROTATION': True, # 轮换后将旧的 refresh token 加入黑名单
+    # ==================================
     # ... 更多设置
 }
 
