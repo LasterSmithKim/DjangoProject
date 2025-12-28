@@ -55,7 +55,7 @@ REST_FRAMEWORK = {
 
 # 可选：设置 JWT 有效期等高级选项，这里使用默认值
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5), # 访问令牌生命周期
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1), # 访问令牌生命周期
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # 刷新令牌生命周期
     # ... 更多设置
 }
