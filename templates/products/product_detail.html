@@ -1,0 +1,56 @@
+{% extends "products/base_products.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="display-5">{{ product.name }}</h1>
+                <p class="text-muted">商品编号：#{{ product.pk }}</p>
+                <hr>
+                <h3 class="text-danger">价格：{{ product.get_display_price }}</h3>
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-fluid" style="max-height: 300px;">
+                {% else %}
+                    <p>暂无图片</p>
+                {% endif %}
+                <!-- 左侧：图片展示区 -->
+                <div class="col-md-6">
+                    {% if product.images.all %}
+                        <!-- 主图 -->
+                        <div class="main-image mb-3">
+                            <img src="{{ product.images.first.image.url }}" id="mainImg" class="img-fluid rounded shadow-sm" alt="{{ product.name }}">
+                        </div>
+                        <!-- 缩略图列表 -->
+                        <div class="row g-2">
+                            {% for img_obj in product.images.all %}
+                            <div class="col-3">
+                                <img src="{{ img_obj.image.url }}" class="img-thumbnail thumb-img" 
+                                     style="cursor: pointer; height: 80px; object-fit: cover;"
+                                     onclick="document.getElementById('mainImg').src=this.src">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="bg-light text-center py-5 border rounded">暂无图片</div>
+                    {% endif %}
+                </div>
+                <div class="mt-4">
+                    <h5>产品描述：</h5>
+                    <p class="lead">{{ product.description|default:"暂无描述" }}</p>
+                </div>
+                <div class="mt-5">
+                    <a href="{% url 'products:product_list' %}" class="btn btn-secondary">返回首页</a>
+                    <button class="btn btn-success">立即购买</button>
+                    <a href="{% url 'products:product-update' product.pk %}" class="btn btn-outline-primary btn-sm">修改商品</a>
+                    <!-- 下一步我们可以加一个删除按钮在这里 -->
+                    <form action="{% url 'products:product-delete' product.pk %}" method="post" onsubmit="return confirm('确定要删除这件商品吗？');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">删除商品</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "products/base_products.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="text-center mb-4">管理员登录</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <!-- Django 会自动把登录表单注入到 {{ form }} 变量中 -->
+                    <div class="mb-3">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">进入商城</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!-- products/templates/products/product_list.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+</head>
+<body>
+    <h1>{{ page_title }}</h1> <a href="{% url 'products:product-create' %}">添加商品</a>
+
+    <!-- 使用模板标签 { % for %} 遍历视图传递过来的 'products' 列表 -->
+    {% if products %}
+        <ul>
+        {% for product in products %}
+            <li>
+                <!-- 使用双大括号 {{ variable }} 显示数据 -->
+                <!-- 使用 url 标签，并传入 product.id 作为 pk 参数 -->
+                <a href="{% url 'products:product-detail' pk=product.id %}">
+                <strong>{{ product.name }}</strong> - 价格: {{ product.price }} 元</a>
+                <p>{{ product.description }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>暂无产品信息。</p>
+    {% endif %}
+
+</body>
+</html>

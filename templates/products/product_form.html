@@ -1,0 +1,39 @@
+{% extends "products/base_products.html" %}
+
+{% block content %}
+<div class="card shadow p-4 mx-auto" style="max-width: 500px;">
+    <h2>
+    {% if product %} 修改商品：{{ product.name }} {% else %} 添加新商品 {% endif %}
+    </h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+{#         {% for field in form %}#}
+{#        <div class="mb-3">#}
+{#            <label class="form-label">{{ field.label }}</label>#}
+{#            {{ field }}#}
+{#            #}
+{#            <!-- 显示字段特定的错误 -->#}
+{#            {% if field.errors %}#}
+{#                {% for error in field.errors %}#}
+{#                    <div class="text-danger small">{{ error }}</div>#}
+{#                {% endfor %}#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        {% endfor %}#}
+{#        #}
+{#        <!-- 显示全局错误（如 clean 方法抛出的错误） -->#}
+{#        {% if form.non_field_errors %}#}
+{#        <div class="alert alert-danger">#}
+{#            {{ form.non_field_errors }}#}
+{#        </div>#}
+{#        {% endif %}#}
+
+        
+        {{ form.as_p }}
+        {{ formset.as_p }}
+
+        <button type="submit" class="btn btn-primary w-100">保存产品</button>
+    </form>
+</div>
+{% endblock %}
+
