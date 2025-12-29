@@ -7,9 +7,11 @@ from .forms import ProductForm,ProductImageFormSet # 导入刚刚创建的表单
 from django.contrib.auth.decorators import login_required # 导入装饰器
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from rest_framework import viewsets,permissions
+from rest_framework import viewsets,permissions,filters
 from .serializers import ProductSerializer
-
+from django_filters.rest_framework import DjangoFilterBackend # 导入后端
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from drf_spectacular.utils import extend_schema  # 导入这个
 
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
@@ -137,7 +139,50 @@ class ProductViewSet(viewsets.ModelViewSet):
     # 注意：我们移除了 'queryset = Product.objects.all()' 这一行，
     # 因为我们将使用 get_queryset 方法动态地获取查询集。
     serializer_class = ProductSerializer
+
+    # 添加解析器，这样 API 就能同时处理 JSON 和文件上传
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    # --- 关键代码开始 ---
+    # 手动定义 POST 请求的结构
+    @extend_schema(
+        request={
+            'multipart/form-data': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string'},
+                    'description': {'type': 'string'},
+                    'price': {'type': 'number'},
+                    'category': {'type': 'integer'},
+                    'image': {'type': 'string', 'format': 'binary'},  # 强制 binary
+                },
+                'required': ['name', 'description', 'price', 'category']
+            }
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        """
+        创建一个新产品，支持图片上传。
+        """
+        return super().create(request, *args, **kwargs)
+    # --- 关键代码结束 ---
+
     permission_classes = [permissions.IsAuthenticated]  # 现在要求所有操作都必须登录
+
+    # 启用过滤后端：支持字段过滤、关键字搜索、排序
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    # 设置哪些字段可以精确过滤
+    filterset_fields = ['category']
+
+    # 设置哪些字段可以模糊搜索
+    search_fields = ['name', 'description']
+
+    # 设置哪些字段可以排序
+    ordering_fields = ['price', 'created_at']
+
+
+
 
     # 覆盖 get_queryset 方法以实现按用户过滤
     def get_queryset(self):

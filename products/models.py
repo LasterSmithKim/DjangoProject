@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="分类名")
+    detail = models.CharField(max_length=100,verbose_name="分类详情")
     # 建立分类与用户的多对多关系：哪些用户能看这个分类
     allowed_users = models.ManyToManyField(User, related_name='viewable_categories')
 

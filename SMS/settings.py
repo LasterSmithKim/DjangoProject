@@ -45,12 +45,18 @@ INSTALLED_APPS = [
     'products',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  # 用于实现登出功能
+    'django_filters',
+    'drf_spectacular',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication', # 设置默认的认证类
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+# 添加下面这两行
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10  # 每页显示 10 条数据
 }
 
 # 可选：设置 JWT 有效期等高级选项，这里使用默认值
