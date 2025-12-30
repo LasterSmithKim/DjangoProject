@@ -24,12 +24,15 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from accounts.views import RegisterView,UserMeView
+from accounts.views import RegisterView,UserMeView,ProfileUpdateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     # 这一行会开启：/accounts/login/, /accounts/logout/ 等路由
     path('accounts/', include('django.contrib.auth.urls')),
+
+
     # path('api/products/', include('products.urls',namespace='apiproducts')), # 将 products 的 API 挂在 api/products/ 下
     path('products/', include('products.urls', namespace='products')),
 
@@ -43,6 +46,7 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/register/', RegisterView.as_view(), name='register'),
     path('api/me/', UserMeView.as_view(), name='user_me'),
+    path('profile/update/', ProfileUpdateView.as_view(), name='profile_update'),
 
 ]
 
