@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from accounts.views import RegisterView,UserMeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,6 +41,8 @@ urlpatterns = [
     # 加上这三行
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/me/', UserMeView.as_view(), name='user_me'),
 
 ]
 

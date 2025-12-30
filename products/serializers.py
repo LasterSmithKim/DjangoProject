@@ -18,7 +18,7 @@ class ProductSerializer(serializers.ModelSerializer):
     category_detail = CategorySerializer(source='category', read_only=True)
 
     # 显式声明 image 为文件字段。注意：不要加 read_only=True
-    image = serializers.FileField(required=False, allow_null=True)
+    # image = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = Product

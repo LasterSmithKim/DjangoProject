@@ -41,12 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
     'products',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  # 用于实现登出功能
     'django_filters',
     'drf_spectacular',
+    'accounts',
 ]
 
 REST_FRAMEWORK = {

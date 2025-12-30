@@ -204,5 +204,3 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 
-
-
