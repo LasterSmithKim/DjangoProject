@@ -2,13 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render,redirect,get_object_or_404 # 导入 redirect 用于重定向
-from .models import Product,ProductImage  # 导入我们第二阶段创建的 Model
+from .models import Product,ProductImage,Category  # 导入我们第二阶段创建的 Model
 from .forms import ProductForm,ProductImageFormSet # 导入刚刚创建的表单类
 from django.contrib.auth.decorators import login_required # 导入装饰器
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets,permissions,filters
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer,CategorySerializer
 from django_filters.rest_framework import DjangoFilterBackend # 导入后端
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from drf_spectacular.utils import extend_schema  # 导入这个
@@ -135,6 +135,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     # # 添加权限：仅登录用户可写，匿名用户只能看 (GET)
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    # 核心方案 A：匿名用户可看（GET），登录用户可写（POST/PUT等）
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     queryset = Product.objects.all()
     # 注意：我们移除了 'queryset = Product.objects.all()' 这一行，
     # 因为我们将使用 get_queryset 方法动态地获取查询集。
@@ -167,7 +170,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)
     # --- 关键代码结束 ---
 
-    permission_classes = [permissions.IsAuthenticated]  # 现在要求所有操作都必须登录
+    # permission_classes = [permissions.IsAuthenticated]  # 现在要求所有操作都必须登录
 
     # 启用过滤后端：支持字段过滤、关键字搜索、排序
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -181,26 +184,21 @@ class ProductViewSet(viewsets.ModelViewSet):
     # 设置哪些字段可以排序
     ordering_fields = ['price', 'created_at']
 
-
-
-
     # 覆盖 get_queryset 方法以实现按用户过滤
-    def get_queryset(self):
-        """
-        这个视图应返回所有当前已认证用户有权访问的产品。
-        """
-        user = self.request.user
-        # 如果用户是匿名的（理论上 IsAuthenticated 权限会阻止，但安全起见），返回空查询集
-        if user.is_anonymous:
-            return Product.objects.none()
+    # def get_queryset(self):
+    #     """
+    #     这个视图应返回所有当前已认证用户有权访问的产品。
+    #     """
+    #     user = self.request.user
+    #     # 如果用户是匿名的（理论上 IsAuthenticated 权限会阻止，但安全起见），返回空查询集
+    #     if user.is_anonymous:
+    #         return Product.objects.none()
+    #
+    #     # 应用你原有的过滤逻辑：
+    #     return Product.objects.filter(category__allowed_users=user).distinct()
 
-        # 应用你原有的过滤逻辑：
-        return Product.objects.filter(category__allowed_users=user).distinct()
-
-
-
-
-
-
-
-
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    # 添加权限：仅登录用户可写，匿名用户只能看 (GET)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]

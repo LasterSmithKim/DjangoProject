@@ -3,17 +3,20 @@
 from django.urls import path,include
 from . import views  # 导入你的视图文件
 from rest_framework.routers import DefaultRouter
-from .views import ProductViewSet
+from .views import ProductViewSet,CategoryViewSet
 
 app_name = 'products'  # <--- 必须加这一行，且值要与 namespace 一致
 
 router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
 router.register(r'', ProductViewSet) # 注册路径为 products/
+
 
 urlpatterns = [
     # 当路径为空（即 /products/ 时），调用 views.product_list 函数
     # path('', views.product_list, name='product-list'),
     path('api/', include(router.urls)),
+
 
     path('index/', views.ProductListView.as_view(), name='product_list'),
     #path('index/', views.product_index, name='product_list'),

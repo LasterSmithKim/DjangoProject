@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'products',
+    'corsheaders',  # 添加这一行
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  # 用于实现登出功能
     'django_filters',
     'drf_spectacular',
     'accounts',
+
 ]
 
 REST_FRAMEWORK = {
@@ -58,6 +60,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10  # 每页显示 10 条数据
 }
+
+
+# 允许所有域名跨域（开发阶段最省心）
+CORS_ALLOW_ALL_ORIGINS = True
 
 # 可选：设置 JWT 有效期等高级选项，这里使用默认值
 SIMPLE_JWT = {
@@ -71,6 +77,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 必须放在最前面或者很靠前的位置
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
